@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Header } from './components/Header';
 import { BarcodeScanner } from './components/BarcodeScanner';
 import { ProductCard } from './components/ProductCard';
 import { ManualSearch } from './components/ManualSearch';
 import { EmptyState } from './components/EmptyState';
+import { ProductResultModal } from './components/ProductResultModal';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { fetchProductByBarcode } from './services/foodService';
 import { Product } from './types';
@@ -16,6 +17,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'scanner' | 'history'>('scanner');
   const [lastScannedProduct, setLastScannedProduct] = useState<Product | null>(null);
+  const [showProductModal, setShowProductModal] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState('Buscando producto...');
 
   const handleScanSuccess = useCallback(async (barcode: string) => {
@@ -23,6 +25,7 @@ function App() {
     setIsLoading(true);
     setError(null);
     setLastScannedProduct(null);
+    setShowProductModal(false);
     setLoadingMessage('Buscando producto en OpenFoodFacts...');
 
     try {
@@ -44,6 +47,9 @@ function App() {
           const filtered = prev.filter(p => p.code !== product.code);
           return [product, ...filtered].slice(0, 50); // Keep last 50 products
         });
+        
+        // Mostrar el modal con el resultado
+        setShowProductModal(true);
       } else {
         setError('Producto no encontrado en la base de datos de OpenFoodFacts');
       }
@@ -63,6 +69,10 @@ function App() {
       setLastScannedProduct(null);
     }
   }, [setProducts, lastScannedProduct]);
+
+  const handleCloseProductModal = () => {
+    setShowProductModal(false);
+  };
 
   const clearError = () => setError(null);
 
@@ -176,17 +186,6 @@ function App() {
               </div>
             </div>
 
-            {/* Mostrar último producto escaneado */}
-            {lastScannedProduct && (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900">Resultado de la búsqueda</h3>
-                <ProductCard
-                  product={lastScannedProduct}
-                  onRemove={handleRemoveProduct}
-                />
-              </div>
-            )}
-
             {/* Empty state solo si no hay productos y no hay resultado reciente */}
             {products.length === 0 && !isLoading && !lastScannedProduct && (
               <EmptyState onStartScanning={() => setIsScanning(true)} />
@@ -248,6 +247,14 @@ function App() {
         isActive={isScanning}
         onScanSuccess={handleScanSuccess}
         onClose={() => setIsScanning(false)}
+      />
+
+      {/* Product Result Modal */}
+      <ProductResultModal
+        isOpen={showProductModal}
+        product={lastScannedProduct}
+        onClose={handleCloseProductModal}
+        onRemove={handleRemoveProduct}
       />
     </div>
   );

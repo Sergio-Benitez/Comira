@@ -10,8 +10,8 @@ export function Header() {
             <Leaf className="w-8 h-8 text-green-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">FoodScan</h1>
-            <p className="text-sm text-gray-600">Verificador Vegano y Vegetariano</p>
+            <h1 className="text-2xl font-bold text-gray-900">VeganIA</h1>
+            <p className="text-sm text-gray-600">Verificador Vegano con Inteligencia Artificial</p>
           </div>
         </div>
       </div>

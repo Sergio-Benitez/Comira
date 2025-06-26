@@ -15,6 +15,7 @@ export interface Product {
   confidence: number;
   analysisSource?: 'openfoodfacts' | 'gemini' | 'basic';
   aiReasoning?: string;
+  confidenceExplanation?: string;
   scanned_at: string;
 }
 

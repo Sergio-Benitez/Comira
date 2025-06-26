@@ -29,6 +29,10 @@ export function BarcodeScanner({ onScanSuccess, onClose, isActive }: BarcodeScan
             showZoomSliderIfSupported: true,
             defaultZoomValueIfSupported: 2,
             rememberLastUsedCamera: true,
+            // Configuración para preferir cámara trasera
+            videoConstraints: {
+              facingMode: { ideal: "environment" } // "environment" = cámara trasera
+            }
           },
           false
         );
@@ -103,6 +107,9 @@ export function BarcodeScanner({ onScanSuccess, onClose, isActive }: BarcodeScan
         <div className="mt-4 text-center">
           <p className="text-xs text-gray-500">
             Tip: Asegúrate de que el código de barras esté bien enfocado y sin reflejos
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            Se preferirá la cámara trasera automáticamente si está disponible
           </p>
         </div>
       </div>
